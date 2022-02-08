@@ -93,68 +93,84 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-// todo
-// 1. Select two elements (button, hint)
+// ////////////////
+// Rehearsal
+// ////////////////
+const music = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+// 1. Select elements! (button, hint)
 const button = document.querySelector("#show-hint");
 const hint = document.querySelector(".hint");
-// 2. Listen to a click 
-button.addEventListener("click", () => {
-  // 3. Change the DOM (add the class active)
+// 2. Listen to an event (click on the button)
+button.addEventListener("click", (event) => {
+  console.log(event);
+  // 3. Change the DOM, add active class to hint!
   hint.classList.add("active");
+  music.play()
 });
 
-const isNextToEmpty = (emptyTile, clickedTile) => {
-  // some stuff here
-  // get the xe/ye of empty and xc/yc clicked
-  const emptyX = emptyTile.cellIndex; // x pos
-  const emptyY = emptyTile.parentElement.rowIndex;
+// ////////////////
+// Live code
+// ////////////////
 
-  const clickedX = clickedTile.cellIndex; // x pos
-  const clickedY = clickedTile.parentElement.rowIndex; // row index should be used on a "row"
-  // if (Math.abs(xe-xc) + Math.abs(ye-yc) == 1)
-  // that's already a boolean!
-  return (Math.abs(emptyX-clickedX) + Math.abs(emptyY-clickedY) === 1);
+const didWeWin = (tiles) => {
+  const numbers = [];
+  tiles.forEach((tile) => {
+    numbers.push(tile.innerText);
+  });
+  console.log(numbers.join());
+
+  return numbers.join() === "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,";
 };
 
-const swapTiles = (emptyTile, clickedTile) => {
+const swapeTiles = (tile) => {
+  const emptyTile = document.querySelector(".empty");
   emptyTile.classList.remove("empty");
-  clickedTile.classList.add("empty");
-  emptyTile.innerText = clickedTile.innerText;
-  clickedTile.innerText = "";
+  emptyTile.innerText = tile.innerText;
+
+  tile.innerText = "";
+  tile.classList.add("empty");
 }
 
-const doWeWin = (tiles) => {
-  const winningCombi = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,";
-  const actualCombi = [];
-  tiles.forEach((tile) => {
-    actualCombi.push(tile.innerText);
-  });
+const isNearEmpty = (tile) => {
+  const tileColumn = tile.cellIndex;
+  const tileRow = tile.parentElement.rowIndex;
 
-  return winningCombi === actualCombi.join();
-}
+  const emptyTile = document.querySelector(".empty");
+  const emptyTileColumn = emptyTile.cellIndex;
+  const emptyTileRow = emptyTile.parentElement.rowIndex;
 
-// Select all tiles
+  //  Math.abs(tileColumn - emptyTileColumn) // should <= than 1
+  //  Math.abs(tileRow - emptyTileRow) // should <= than 1
+  //  Math.abs(tileColumn - emptyTileColumn) + Math.abs(tileRow - emptyTileRow) // is equal to 1
+  return (Math.abs(tileColumn - emptyTileColumn) + Math.abs(tileRow - emptyTileRow) == 1)
+  // should return true/false
+};
+// 1. Select all the tiles (nodelist)
 const tiles = document.querySelectorAll("td");
-// nodelist iterate over the list
+console.log(tiles);
+// 2. iterate through each tile
 tiles.forEach((tile) => {
-  // 1 listen for click on each of the tiles
+  // 3. listen to an event(click)
   tile.addEventListener("click", (event) => {
-    // 2 check if the empty tile is next to the clicked tile
-    // create a function 
-    // (name: isNextToEmpty, params: emptyTile, clickedTile, return: true/false)
-    const emptyTile = document.querySelector(".empty");
-    const clickedTile = event.currentTarget;
-    if (isNextToEmpty(emptyTile, clickedTile)) {
-      // 3 swap the tile
-      swapTiles(emptyTile, clickedTile);
-      // 4 when the list is ordered by asc display WIN
-      if (doWeWin(tiles)) {
+    console.log(event)
+    // 4. check if the tile is next to an empty space
+    const clickedTile = event.currentTarget; // the html element that has been clicked!
+    if(isNearEmpty(clickedTile)) {
+      console.log("next to empty tile!")
+      // 5. swap the empty place with the tile
+      swapeTiles(clickedTile);
+      // 6. check if the player wins
+      if (didWeWin(tiles)) {
         alert("You won!");
       }
     }
+    
   });
 });
-//
+
+
+
+
 
 /***/ })
 
